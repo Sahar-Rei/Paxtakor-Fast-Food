@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paxtakor Fast Food — Hot-Dog</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  body{background:#111111;color:#fff;font-family:'Archivo',Arial,sans-serif}
+  .display{font-family:'Archivo Black',Impact,'Arial Black',sans-serif;letter-spacing:.01em}
+  .card{transition:transform .12s,box-shadow .12s;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .card:active{transform:scale(.97)}
+  .card.active{border-color:#FFC700;box-shadow:0 0 0 4px #E53935,6px 6px 0 4px #E53935;transform:rotate(-1deg)}
+  .card.active .pick{background:#FFC700;color:#111}
+  .press{box-shadow:0 6px 0 #7f1d1d;transition:transform .08s,box-shadow .08s}
+  .press:active{transform:translateY(5px);box-shadow:0 1px 0 #7f1d1d}
+  input,textarea{background:#1c1c1c;border:3px solid #444;color:#fff;border-radius:.5rem;padding:.7rem .8rem;width:100%;font-size:16px;font-weight:700}
+  input:focus,textarea:focus{outline:none;border-color:#FFC700}
+  :focus-visible{outline:3px solid #FFC700;outline-offset:2px}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+</style>
+</head>
+<body>
+
+<!-- ШАПКА -->
+<header class="border-b-4 border-red-600 bg-black">
+  <div class="max-w-3xl mx-auto px-3 py-3 flex flex-wrap items-center justify-between gap-2">
+    <div class="bg-[#FFC700] text-black border-4 border-black outline outline-4 outline-red-600 px-3 py-1 -rotate-2 display text-lg sm:text-2xl leading-none">PAXTAKOR FAST FOOD</div>
+    <a href="tel:+998952465009" class="press bg-[#E53935] text-white display text-sm sm:text-base px-4 py-2 rounded-lg border-4 border-white">📞 +998 95-246-50-09</a>
+    <p class="w-full font-bold text-sm sm:text-base text-white/90">
+      <a href="https://www.google.com/maps?q=41.5095751,60.6644762" id="map">
+        📍 Paxtakor, 33-maktab oldi
+        </a>
+      </p>
+    </div>
+</header>
+
+<!-- HERO -->
+<section class="max-w-3xl mx-auto px-3 pt-8 pb-6 text-center">
+  <h1 class="display text-[#FFC700] text-5xl sm:text-7xl leading-[1.05] -rotate-1">HOT DOG<br><span class="text-white">|</span> Mazali lahzalar</h1>
+  <p class="mt-4 inline-block bg-white text-black display text-sm sm:text-lg px-4 py-2 border-4 border-red-600 rotate-1">Har kuni yangi va issiq hot-doglar</p>
+  <p class="mt-5 text-base sm:text-lg font-bold max-w-xl mx-auto">Не жди в очереди! Выбери хот-доги ниже, укажи время и забери горячим!</p>
+</section>
+
+<!-- МЕНЮ -->
+<section class="max-w-3xl mx-auto px-3 pb-8">
+  <h2 class="display text-2xl sm:text-3xl mb-4 border-l-8 border-red-600 pl-3">Menyu <span class="text-[#FFC700]">/ Меню</span></h2>
+  <div id="menu" class="grid grid-cols-2 gap-3 sm:gap-5"></div>
+</section>
+
+<!-- ФОРМА -->
+<section id="order" class="max-w-3xl mx-auto px-3 pb-16">
+  <form id="form" class="bg-[#1a1a1a] border-4 border-red-600 rounded-xl p-4 sm:p-6 space-y-4" novalidate>
+    <h2 class="display text-2xl sm:text-3xl text-[#FFC700]">Оформить быстрый предзаказ</h2>
+
+    <div>
+      <p class="font-extrabold mb-2">Выбранные позиции</p>
+      <div id="items" class="space-y-2"></div>
+      <div class="mt-3 flex justify-between items-center bg-[#FFC700] text-black border-4 border-black px-3 py-2 display">
+        <span>Итого: <span id="totalQty">0</span> шт.</span>
+        <span id="totalSum" class="text-lg">0 сум</span>
+      </div>
+    </div>
+
+    <label class="block"><span class="font-extrabold block mb-1">Имя</span>
+      <input id="name" type="text" autocomplete="name" placeholder="Ismingiz / Ваше имя"></label>
+
+    <label class="block"><span class="font-extrabold block mb-1">Номер телефона</span>
+      <input id="phone" type="tel" inputmode="tel" autocomplete="tel" value="+998 " placeholder="+998 __ ___ __ __"></label>
+
+    <div>
+      <label for="time" class="font-extrabold block mb-1">К какому времени приготовить?</label>
+      <input id="time" type="text" placeholder="Например: К 18:30">
+      <div class="flex flex-wrap gap-2 mt-2" id="chips"></div>
+    </div>
+
+    <label class="block"><span class="font-extrabold block mb-1">Комментарий к заказу</span>
+      <textarea id="comment" rows="2" placeholder="Без лука, больше соуса..."></textarea></label>
+
+    <p id="error" class="hidden bg-red-600 text-white font-bold px-3 py-2 rounded border-2 border-white"></p>
+
+    <button id="send" type="submit" class="press w-full display text-lg sm:text-xl py-4 rounded-xl border-4 border-black text-black bg-gradient-to-r from-[#E53935] via-[#ff7a2f] to-[#FFC700]">ОТПРАВИТЬ ПРЕДЗАКАЗ В TELEGRAM</button>
+  </form>
+</section>
+
+<footer class="border-t-4 border-red-600 bg-black text-center py-5 text-sm font-bold">
+  PAXTAKOR FAST FOOD · <a href="https://www.google.com/maps?q=41.5095751,60.6644762">📍 33-maktab oldi </a>· <a class="text-[#FFC700]" href="tel:+998952465009">+998 95-246-50-09</a>
+</footer>
+
+<!-- МОДАЛКА УСПЕХА -->
+<div id="modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+  <div class="bg-[#FFC700] text-black border-4 border-red-600 rounded-xl p-6 max-w-sm text-center -rotate-1" style="box-shadow:8px 8px 0 #E53935">
+    <div class="text-5xl">🌭</div>
+    <h3 class="display text-2xl mt-2">Ваш предзаказ принят!</h3>
+    <p class="font-bold mt-2">Ждем вас в Paxtakor Fast Food</p>
+    <button id="closeModal" class="press mt-5 bg-[#E53935] text-white display px-6 py-3 rounded-lg border-4 border-black">OK</button>
+  </div>
+</div>
+
+<script>
+
+  const BOT_TOKEN = "8744028113:AAG90uu1Oi2P2_RotgMfnaufXYgQjl2jPwA";
+
+  const CHAT_ID = "2095760800";
+  // ================================
+
+  
+  const MENU = [
+  {
+    id: 1,
+    name: "Oddiy Hot-Dog (1x Sosiska)",
+    type: "Oddiy bo'lichka",
+    price: 13000,
+    img: "photo_1_2026-10-02_20-04-29.jpg",
+    ingredients: "1 sosiska, Pomidor-bodring, Chimchi, 3 xil sous, Sir"
+  },
+  {
+    id: 2,
+    name: "Oddiy Hot-Dog (2x Sosiska)",
+    type: "Oddiy bo'lichka",
+    price: 18000,
+    img: "photo_2_2026-10-02_20-04-29.jpg",
+    ingredients: "2 sosiska, Pomidor-bodring, Chimchi, 4 xil sous, Sir"
+  },
+  {
+    id: 3,
+    name: "Oddiy Hot-Dog (3x Sosiska)",
+    type: "Oddiy bo'lichka",
+    price: 23000,
+    img: "photo_3_2026-10-02_20-04-29.jpg",
+    ingredients: "3 sosiska, Pomidor-bodring, Chimchi, 5 xil sous, Sir"
+  },
+  {
+    id: 4,
+    name: "Sutli Hot-Dog (1x Sosiska)",
+    type: "Sutli bo'lichka",
+    price: 15000,
+    img: "photo_4_2026-10-02_20-04-29.jpg",
+    ingredients: "1 sosiska, Pomidor-bodring, Chimchi, 4 xil sous, Sir"
+  },
+  {
+    id: 5,
+    name: "Sutli Hot-Dog (2x Sosiska)",
+    type: "Sutli bo'lichka",
+    price: 20000,
+    img: "photo_5_2026-10-02_20-04-29.jpg",
+    ingredients: "2 sosiska, Pomidor-bodring, Chimchi, 4 xil sous, Sir"
+  },
+  {
+    id: 6,
+    name: "Sutli Hot-Dog (3x Sosiska)",
+    type: "Sutli bo'lichka",
+    price: 25000,
+    img: "photo_6_2026-10-02_20-04-29.jpg",
+    ingredients: "3 sosiska, Pomidor-bodring, Chimchi, 5 xil sous, Sir"
+  }
+];
+  const cart = {}; // id -> количество
+  const $ = id => document.getElementById(id);
+  const fmt = n => n.toLocaleString("ru-RU").replace(/\s|\u00a0/g, ".") + " сум";
+  const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+  function renderMenu(){
+    $("menu").innerHTML = MENU.map(m => `
+    <div class="card bg-[#1c1c1c] border-4 border-red-600 rounded-xl overflow-hidden flex flex-col" data-id="${m.id}" tabindex="0" role="button" aria-pressed="false">
+      <!-- Фото -->
+      <div class="aspect-[4/3] bg-gradient-to-br from-[#E53935] to-[#FFC700] flex items-center justify-center text-5xl sm:text-6xl relative">
+        ${m.img ? `<img src="${m.img}" alt="${m.name}" class="w-full h-full object-cover">` : "🌭"}
+        <!-- Категория бейджиком -->
+        <span class="absolute top-2 left-2 bg-black/80 text-[#FFC700] text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded border border-[#FFC700]">${m.type}</span>
+      </div>
+      
+      <!-- Ингредиенты под фото -->
+      <div class="p-2 sm:p-3 flex flex-col flex-1 gap-1">
+        <h3 class="display text-sm sm:text-lg leading-tight text-white">${m.name}</h3>
+        <p class="text-xs sm:text-sm text-gray-300 font-bold leading-snug">
+          📌 <span class="text-gray-400">${m.ingredients}</span>
+        </p>
+
+        <!-- Цена синим цветом (как Мана / Игровой стат) -->
+        <div class="mt-auto pt-2 flex items-center justify-between">
+          <p class="display text-base sm:text-xl text-[#38BDF8] drop-shadow-[0_0_8px_rgba(56,189,248,0.5)]">
+            💧 ${fmt(m.price)}
+          </p>
+        </div>
+
+        <span class="pick mt-2 text-center display text-xs sm:text-sm bg-white text-black border-2 border-black rounded py-2">
+          Tanlash / Выбрать
+        </span>
+      </div>
+    </div>`).join("");
+
+  document.querySelectorAll(".card").forEach(c => {
+    const toggle = () => {
+      const id = +c.dataset.id;
+      if (cart[id]) delete cart[id]; else cart[id] = 1;
+      update();
+    };
+    c.addEventListener("click", toggle);
+    c.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
+  });
+}
+
+    document.querySelectorAll(".card").forEach(c => {
+      const toggle = () => {
+        const id = +c.dataset.id;
+        if (cart[id]) delete cart[id]; else cart[id] = 1;
+        update();
+      };
+      c.addEventListener("click", toggle);
+      c.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
+    });
+  
+
+  function update(){
+    document.querySelectorAll(".card").forEach(c => {
+      const on = !!cart[c.dataset.id];
+      c.classList.toggle("active", on);
+      c.setAttribute("aria-pressed", on);
+      c.querySelector(".pick").textContent = on ? "✔ Выбрано" : "Tanlash / Выбрать";
+    });
+    const ids = Object.keys(cart);
+    $("items").innerHTML = ids.length ? ids.map(id => {
+      const m = MENU.find(x => x.id == id);
+      return `<div class="flex items-center justify-between gap-2 bg-[#111] border-2 border-[#444] rounded-lg p-2">
+        <div class="min-w-0"><p class="font-extrabold truncate">${m.name}</p><p class="text-[#FFC700] text-sm font-bold">${fmt(m.price)}</p></div>
+        <div class="flex items-center gap-2 shrink-0">
+          <button type="button" data-d="-1" data-id="${id}" class="qty w-10 h-10 display text-xl bg-white text-black rounded border-2 border-black" aria-label="Меньше">−</button>
+          <span class="w-6 text-center display">${cart[id]}</span>
+          <button type="button" data-d="1" data-id="${id}" class="qty w-10 h-10 display text-xl bg-[#FFC700] text-black rounded border-2 border-black" aria-label="Больше">+</button>
+        </div></div>`;
+    }).join("") : `<p class="text-white/60 font-bold border-2 border-dashed border-[#444] rounded-lg p-3">Пока ничего не выбрано — нажмите на хот-дог в меню выше.</p>`;
+    document.querySelectorAll(".qty").forEach(b => b.addEventListener("click", () => {
+      const id = b.dataset.id; cart[id] += +b.dataset.d;
+      if (cart[id] < 1) delete cart[id]; else if (cart[id] > 20) cart[id] = 20;
+      update();
+    }));
+    let q = 0, s = 0;
+    ids.forEach(id => { q += cart[id]; s += cart[id] * MENU.find(x => x.id == id).price; });
+    $("totalQty").textContent = q; $("totalSum").textContent = fmt(s);
+  }
+
+  // Быстрые варианты времени
+  ["Через 15 минут","К 14:00","К 18:30"].forEach(t => {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = t;
+    b.className = "bg-white text-black font-extrabold text-sm px-3 py-1 rounded-full border-2 border-black";
+    b.onclick = () => $("time").value = t;
+    $("chips").appendChild(b);
+  });
+
+  // Телефон: только + и цифры, начинается с +998
+  $("phone").addEventListener("input", e => {
+    let v = e.target.value.replace(/[^\d+ ]/g, "");
+    if (!v.startsWith("+998")) v = "+998 " + v.replace(/^\+?9?9?8?\s?/, "");
+    e.target.value = v;
+  });
+
+  function showError(msg){ const e = $("error"); e.textContent = msg; e.classList.remove("hidden"); e.scrollIntoView({behavior:"smooth", block:"center"}); }
+
+  $("form").addEventListener("submit", async ev => {
+    ev.preventDefault();
+    $("error").classList.add("hidden");
+    const ids = Object.keys(cart);
+    const name = $("name").value.trim(), phone = $("phone").value.trim();
+    if (!ids.length) return showError("Выберите хотя бы один хот-дог в меню.");
+    if (!name) return showError("Укажите ваше имя.");
+    if (phone.replace(/\D/g, "").length < 12) return showError("Введите номер телефона полностью: +998 XX XXX XX XX");
+    if (BOT_TOKEN.startsWith("PASTE") || CHAT_ID.startsWith("PASTE")) return showError("Не заполнены BOT_TOKEN и CHAT_ID в коде страницы.");
+
+    let total = 0;
+    const lines = ids.map(id => {
+      const m = MENU.find(x => x.id == id), sum = m.price * cart[id]; total += sum;
+      return `• ${esc(m.name)} × ${cart[id]} = ${fmt(sum)}`;
+    }).join("\n");
+    const text = `🌭 <b>Новый предзаказ — Paxtakor Fast Food</b>\n\n${lines}\n\n<b>Итого:</b> ${fmt(total)}\n\n👤 <b>Имя:</b> ${esc(name)}\n📞 <b>Телефон:</b> ${esc(phone)}\n⏰ <b>Время:</b> ${esc($("time").value.trim() || "не указано")}\n💬 <b>Комментарий:</b> ${esc($("comment").value.trim() || "—")}`;
+
+    const btn = $("send"), old = btn.textContent;
+    btn.disabled = true; btn.textContent = "ОТПРАВЛЯЕМ...";
+    try {
+      const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: "POST", headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({chat_id: CHAT_ID, text, parse_mode: "HTML"})
+      });
+      const d = await r.json();
+      if (!d.ok) throw new Error(d.description || "Telegram error");
+      $("modal").classList.remove("hidden");
+      $("form").reset(); $("phone").value = "+998 ";
+      Object.keys(cart).forEach(k => delete cart[k]); update();
+    } catch (err) {
+      showError("Не удалось отправить заказ. Позвоните нам: +998 95-246-50-09");
+      console.error(err);
+    } finally { btn.disabled = false; btn.textContent = old; }
+  });
+
+  
+
+  $("closeModal").onclick = () => $("modal").classList.add("hidden");
+  $("modal").addEventListener("click", e => { if (e.target.id === "modal") $("modal").classList.add("hidden"); });
+
+  renderMenu(); update();
+</script>
+<script src="./js.js"></script>
+</body>
+</html>
